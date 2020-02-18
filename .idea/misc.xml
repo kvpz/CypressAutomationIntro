@@ -3,4 +3,7 @@
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="ES6" />
   </component>
+  <component name="ProjectResources">
+    <resource url="https://raw.githubusercontent.com/cypress-io/cypress/develop/cli/schema/cypress.schema.json" location="$PROJECT_DIR$" />
+  </component>
 </project>
