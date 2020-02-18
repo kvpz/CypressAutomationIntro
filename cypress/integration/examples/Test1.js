@@ -8,11 +8,15 @@ describe("My First Test Suite", function() {
         cy.get('.product:visible').should('have.length', 4)
 
         // parent child chaining
+        cy.get('.products').as('productLocator') // alias since variable can't be assigned cypress object
         cy.get('.products').find('.product').should('have.length', 4)
 
         // add the 3rd visible product to the cart
         cy.get(':nth-child(3) > .product-action > button').click()
-        cy.get('.products').find('.product').eq(2).contains('ADD TO CART').click()
+        cy.get('@productLocator').find('.product').eq(2).contains('ADD TO CART').click()
+            .then(function() {
+            console.log("ADD TO CART has been pressed!")
+        })
 
 
         // get all the products in the element with the class value "products"
@@ -27,6 +31,13 @@ describe("My First Test Suite", function() {
             }
         })
 
+        cy.get('.brand').should("have.text", "GREENKART")
+
+        cy.get('.brand').then(function(logoElement){
+            cy.log(logoElement.text());
+        })
 
     }) // My First Test Case
+
+
 })
