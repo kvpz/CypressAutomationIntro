@@ -18,7 +18,6 @@ describe("My First Test Suite", function() {
             console.log("ADD TO CART has been pressed!")
         })
 
-
         // get all the products in the element with the class value "products"
         cy.get('.products')
             .find('.product')
