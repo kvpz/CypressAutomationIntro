@@ -12,6 +12,66 @@ Tip coming soon
 ### How to preserve a session across test suite runs
 Tip coming soon
 
+### How to write loops with Cypress
+If the goal is to find all the elements on the page which can be focused on using only the TAB key to move focus
+, then a conditional loop seems like it will be part of the solution.  All that would be needed is to loop until all
+ the elements on the page have received focus or when no other element on the page can be TAB'd to.  This however
+  will not be possible because loops are executed (synchronously) before all the Cypress commands.\
+  Here is a first attempt at solving the problem:
+```javascript
+        cy.visit('https://translate.google.com')
+
+        let foundHistoryBtn = false
+        var itr = 0
+
+        while(!foundHistoryBtn && ++itr < 28) {
+            cy
+                .focused()
+                .invoke('text')
+                .then((t) => {
+
+                    if (t === 'History') {
+                        cy.log('found history button')
+                        foundHistoryBtn = true
+                    }
+
+                    cy.log('no history button found. t = ')
+                    cy.log(t)
+                })
+
+            cy.tab()
+        }
+```
+This novice solution has a big issue:
+ asynchronous and synchronous code is being mixed. The while loop is determined to terminate before the Cypress
+ commands are executed because when the code is first processed, the native commands such as the variable assignments
+  and conditional loops are executed first. By the time the Cypress commands are executed, the while loop had already
+   been executed; and it ended with the false evaluation of the conditional statement ```++itr < 28```.  Another
+    issue in this code is the attempt to change the value of the variable ```foundHistoryBtn```.    
+ 
+A solution that works without the use of conditional loops:
+```javascript
+Cypress.Commands.add('tabToHistorySidePanelLink', () => {
+    function tabTo() {
+        cy.tab()
+        cy
+            .focused()
+            .invoke('text')
+            .then((t) => {
+                if (t === 'History') {
+                    return
+                }
+
+                return tabTo();
+            })
+    }
+
+    return tabTo();
+})
+```
+This recursive method can be called during the execution of Cypress commands.  Termination of the function will be
+ occur at the discovery of an element with text 'History'. 
+
 ## Unexpected pecularities 
 
 Look at the code below. What is the value of ```user``` in the lambda function?
@@ -34,8 +94,8 @@ The value assigned to ```user``` is the password and not the username.  The desi
 ## Assertions
 The test runner considers a single should statement without any chained functions as a single assertion. If single
  should is used to create a custom assertion, then only a single assert will be displayed in the Cypress Test Runner
-  although there were really multiple assertions made. Observe the following lines of code and their output in the
-   Test Runner.
+  although there were really multiple assertions made. Observe the following lines of code and their output
+   in the Test Runner (respectively shown in the image).
 ```javascript
         cy
             .focused()
