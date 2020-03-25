@@ -147,7 +147,7 @@ Stories about the complicated nature of cookie management are coming soon.
 
 * Use chaining to speed up tests.
     
-    This is good
+    This is good because the ```focused``` command is only executed once.
     ```javascript
             cy
                 .focused()
@@ -158,7 +158,7 @@ Stories about the complicated nature of cookie management are coming soon.
     TestRunner output:\
     ![](cypress_chainingEfficiencyTestRunner.png)
     
-    This is bad
+    This is bad because the ```focused``` command is executed twice.
     ```javascript
             cy
                 .focused()
