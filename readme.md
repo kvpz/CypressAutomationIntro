@@ -72,6 +72,19 @@ Cypress.Commands.add('tabToHistorySidePanelLink', () => {
 This recursive method can be called during the execution of Cypress commands.  Termination of the function will be
  occur at the discovery of an element with text 'History'. 
 
+### How to determine if the current element in focus is a child of a particular element
+A working example: while executing many keyboard TAB events with Cypress,<sup>1</sup> you would like to determine if
+ each current element in focus is a child of a particular element.<sup>2</sup> Determining if the current element is
+  a child of a particular element should be an amortized O(1) procedure, and thus leaving the time complexity of the
+   parent task, tabbing through all page elements, at O(*n*), where *n = amount of focusable elements*. 
+   
+To determine if an element is a child of another, there are several solutions:
+1. ```cy.parents()```
+ 
+ <sup>1</sup>The TAB event is the conventional method of navigating a page with a keyboard.\
+ <sup>2</sup> The TAB event was used in this example to encourage forethought on the complexity of code surrounding our
+  target problem.
+
 ## Unexpected pecularities 
 
 Look at the code below. What is the value of ```user``` in the lambda function?
@@ -125,3 +138,10 @@ Stories about the complicated nature of cookie management are coming soon.
 * If tests are expected to finish executing as quickly as possible, then the order in which the tests are executed can
  matter. Most states of the website are preserved by the browser between tests. If test *t+1* requires the website to be in a specific state before it is executed, then it would be more
   efficient if the test *t+1* followed a test *t* that would leave the website in a usable state.  
+
+* ```cy.get('div.page:nth-child(2')``` is valid although there is a parenthesis missing after '2'. Need to check if
+ this has been reported as a bug.
+ 
+* Unable to execute an ```onclick``` event with the function ```type('{Enter}')```. The side panel link elements have
+ an anchor element with an onclick attribute with an event and an href with value ```javascript:void(0);```
+
